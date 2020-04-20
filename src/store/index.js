@@ -21,23 +21,47 @@ export default new Vuex.Store({
       { id: 3, text: '...', done: true },
       { id: 4, text: '...', done: false }
     ],
-    event: [
-      { id: 1, text: '...', done: true },
-      { id: 2, text: '...', done: false },
-      { id: 3, text: '...', done: true },
-      { id: 4, text: '...', done: false }
-    ]
+    events: []
   },
   mutations: {
     ADD_EVENT(state, event) {
       state.event.push(event)
+    },
+    SET_EVENTS(state, events) {
+      state.events = events
+    },
+    SET_EVENT(state, event) {
+      state.event = event
     }
   },
   actions: {
     createEvent({ commit }, event) {
       return EventService.postEvent(event).then(() => {
         commit('ADD_EVENT', event)
-      })      
+      })
+    },
+    fetchEvents({ commit }, { perPage, page }) {
+      EventService.getEvents(perPage, page)
+        .then(response => {
+          commit('SET_EVENTS', response.data)
+        })
+        .catch(error => {
+          console.log('There was an error: ', error.response)
+        })
+    },
+    fetchEvent({ commit, gatters }, id) {
+      var event = gatters.getEventById(id)
+      if (event) {
+        commit('SET_EVENT', event)
+      } else {
+        EventService.getEvent(id)
+          .then(response => {
+            commit('SET_EVENT', response.data)
+          })
+          .catch(error => {
+            console.log('There was an error: ', error.response)
+          })
+      }
     }
   },
   getters: {
