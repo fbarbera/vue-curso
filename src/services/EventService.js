@@ -8,12 +8,15 @@ const apiClient = axios.create({
     'Content-Type': 'application/json'
   }
 })
-
+//json-server --watch 
 export default {
   getEvents() {
     return apiClient.get('/events')
   },
   getEvent(id){
     return apiClient.get('/events/' + id)
+  },
+  postEvent(event) {
+    return apiClient.post('/events', event)
   }
 }
